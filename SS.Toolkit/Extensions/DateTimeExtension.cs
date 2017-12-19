@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SS.Toolkit.Extension
+namespace SS.Toolkit.Extensions
 {
     /// <summary>
     /// 时间转换扩展
@@ -20,11 +20,11 @@ namespace SS.Toolkit.Extension
             DateTime time = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             if (t.ToString().Length == 10)
             {
-                return time.AddSeconds((double)t).ToLocalTime();
+                return time.AddSeconds(t).ToLocalTime();
             }
             else
             {
-                return time.AddMilliseconds((double)t).ToLocalTime();
+                return time.AddMilliseconds(t).ToLocalTime();
             }
         }
     }
