@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Toolkit", "SS.Toolkit\SS.Toolkit.csproj", "{B95407B6-110D-43DD-A251-70AD367B43F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Toolkit", "SS.Toolkit\SS.Toolkit.csproj", "{B95407B6-110D-43DD-A251-70AD367B43F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Alibaba", "SS.Alibaba\SS.Alibaba.csproj", "{6111EF51-6F8F-477C-9232-2F49244482C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.MetaWeblog", "SS.MetaWeblog\SS.MetaWeblog.csproj", "{B40D8D95-24AE-450C-8831-C391132C2D51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{B95407B6-110D-43DD-A251-70AD367B43F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B95407B6-110D-43DD-A251-70AD367B43F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B95407B6-110D-43DD-A251-70AD367B43F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6111EF51-6F8F-477C-9232-2F49244482C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6111EF51-6F8F-477C-9232-2F49244482C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6111EF51-6F8F-477C-9232-2F49244482C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6111EF51-6F8F-477C-9232-2F49244482C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40D8D95-24AE-450C-8831-C391132C2D51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40D8D95-24AE-450C-8831-C391132C2D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40D8D95-24AE-450C-8831-C391132C2D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40D8D95-24AE-450C-8831-C391132C2D51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
