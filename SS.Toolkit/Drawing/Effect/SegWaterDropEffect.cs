@@ -153,10 +153,9 @@ namespace SS.Toolkit.Drawing.Effect
                             maxW = curW;
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        //e.printStackTrace();
-                        //System.exit(0);
+                        throw ex;
                     }
                 }
 

@@ -11,17 +11,30 @@ namespace SS.Toolkit.Drawing.Effect
     /// </summary>
     public class ScaleEffect : IImageEffect<ImageResult>
     {
-        private int _scale = 1;
+        private double _scale = 1;
+        private int _width = 0;
+        private int _height = 0;
 
-        public ScaleEffect(int scale)
+        public ScaleEffect(double scale)
         {
             _scale = scale;
         }
 
+        public ScaleEffect(int height, int width)
+        {
+            _height = height;
+            _width = width;
+        }
+
         public ImageResult Execute(Bitmap bitmap)
         {
-            int w = bitmap.Width * _scale;
-            int h = bitmap.Height * _scale;
+            int w = (int)(bitmap.Width * _scale);
+            int h = (int)(bitmap.Height * _scale);
+            if (_width != 0 && _height != 0)
+            {
+                w = _width;
+                h = _height;
+            }
             Bitmap cloneBitmap = new Bitmap(w, h);
             using (Graphics g = Graphics.FromImage(cloneBitmap))
             {

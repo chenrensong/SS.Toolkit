@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Net;
 
 namespace SS.Toolkit.Http
 {
 
-
-
     public class AsyncHttpClient
     {
-
-        public static AsyncHttpClient Create()
-        {
-            return new AsyncHttpClient();
-        }
-
-
         private Uri _uri;
         private Dictionary<string, string> _headers;
         private string _encoding;
+
+        private CookieContainer _cookieContainer;
+        private bool? _expectContinue;
+        private bool? _allowAutoRedirect;
+        private TimeSpan? _timeout;
+        private DecompressionMethods? _automaticDecompression;
 
         public Dictionary<string, string> Headers
         {
@@ -36,10 +32,21 @@ namespace SS.Toolkit.Http
             }
         }
 
+        public AsyncHttpClient ExpectContinue(bool expectContinue)
+        {
+            _expectContinue = expectContinue;
+            return this;
+        }
 
         public Uri Uri()
         {
             return _uri;
+        }
+
+        public AsyncHttpClient Timeout(long timeout)
+        {
+            _timeout = new TimeSpan(timeout);
+            return this;
         }
 
         public AsyncHttpClient Url(string url)
@@ -53,6 +60,16 @@ namespace SS.Toolkit.Http
             return this;
         }
 
+        /// <summary>
+        /// 是否允许自动跳转
+        /// </summary>
+        /// <param name="allowAutoRedirect"></param>
+        /// <returns></returns>
+        public AsyncHttpClient AllowAutoRedirect(bool allowAutoRedirect)
+        {
+            _allowAutoRedirect = allowAutoRedirect;
+            return this;
+        }
 
         public AsyncHttpClient Encoding(string encoding)
         {
@@ -61,11 +78,20 @@ namespace SS.Toolkit.Http
             return this;
         }
 
-        public AsyncHttpClient SerDefaultUA()
+        public AsyncHttpClient AutomaticDecompression(DecompressionMethods automaticDecompression)
+        {
+            _automaticDecompression = automaticDecompression;
+            return this;
+        }
+
+        /// <summary>
+        /// 使用默认
+        /// </summary>
+        /// <returns></returns>
+        public AsyncHttpClient DefaultUserAgent()
         {
             return UserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
         }
-
 
         public AsyncHttpClient Header(string name, string value)
         {
@@ -82,8 +108,23 @@ namespace SS.Toolkit.Http
         {
             if (cookies != null)
             {
-                Header("Cookie", cookies);
+                _cookieContainer = AsyncCookieContainer.Create(cookies).ToCookieContainer();
             }
+            return this;
+        }
+
+        public AsyncHttpClient Cookies(AsyncCookieContainer acc)
+        {
+            if (acc != null)
+            {
+                _cookieContainer = acc.ToCookieContainer();
+            }
+            return this;
+        }
+
+        public AsyncHttpClient Cookies(CookieContainer cookieContainer)
+        {
+            _cookieContainer = cookieContainer;
             return this;
         }
 
@@ -132,6 +173,7 @@ namespace SS.Toolkit.Http
 
         public async Task<AsyncHttpResponse> Get()
         {
+
             var client = DoBuildHttpClient();
 
             try
@@ -207,9 +249,29 @@ namespace SS.Toolkit.Http
 
         private HttpClient DoBuildHttpClient()
         {
-
-            HttpClient client = new HttpClient();
-
+            var clientHandler = new HttpClientHandler();
+            if (_cookieContainer != null)
+            {
+                clientHandler.UseCookies = true;
+                clientHandler.CookieContainer = _cookieContainer;
+            }
+            if (_automaticDecompression.HasValue)
+            {
+                clientHandler.AutomaticDecompression = _automaticDecompression.Value;
+            }
+            if (_allowAutoRedirect.HasValue)
+            {
+                clientHandler.AllowAutoRedirect = _allowAutoRedirect.Value;
+            }
+            var client = new HttpClient(clientHandler);
+            if (_timeout.HasValue)
+            {
+                client.Timeout = _timeout.Value;
+            }
+            if (_expectContinue.HasValue)
+            {
+                client.DefaultRequestHeaders.ExpectContinue = _expectContinue.Value;
+            }
             if (_headers != null)
             {
                 foreach (var kv in _headers)
@@ -221,102 +283,8 @@ namespace SS.Toolkit.Http
             return client;
         }
     }
-    public class AsyncHttpCookies
-    {
-
-        private SortedDictionary<string, AsyncHttpCookie> cookies = new SortedDictionary<string, AsyncHttpCookie>();
-
-        public AsyncHttpCookie this[string key]
-        {
-            get
-            {
-                return cookies[key];
-            }
-        }
-
-
-        public void Add(AsyncHttpCookie cookie)
-        {
-            try
-            {
-                cookies.Add(cookie.Name, cookie);
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        public override string ToString()
-        {
-            return string.Join(";", cookies.Values);
-        }
-
-    }
-    public sealed class AsyncHttpCookie
-    {
-        public AsyncHttpCookie(string cookie)
-        {
-            var keys = cookie.Split(';');
-            if (keys.Length > 0)
-            {
-                this.Name = keys[0].Split('=')[0];
-                this.Value = keys[0].Split('=')[1];
-                if (keys.Length > 1)
-                {
-                    this.Path = keys[1].Split('=')[1];
-                }
-                try
-                {
-                    if (keys.Length > 2)
-                    {
-                        this.Domain = keys[2].Split('=')[1];
-                    }
-                    if (keys.Length > 3)
-                    {
-                        this.MaxAge = keys[3].Split('=')[1];
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
-        public string Name { get; set; }
-
-        public string Value { get; set; }
-
-        public string Path { get; set; }
-
-        public string MaxAge { get; set; }
-
-        public string Domain { get; set; }
-
-        public override string ToString()
-        {
-            var builder = new List<string>();
-            builder.Add($"{Name}={Value}");
-            if (!string.IsNullOrEmpty(Path))
-            {
-                builder.Add($"Path={Path}");
-            }
-            if (!string.IsNullOrEmpty(Domain))
-            {
-                builder.Add($"Domain={Domain}");
-            }
-            if (!string.IsNullOrEmpty(MaxAge))
-            {
-                builder.Add($"Max-Age={MaxAge}");
-            }
-            return string.Join(";", builder);
-        }
-
-    }
     public class AsyncHttpQuery : SortedDictionary<string, string>
     {
-
         public AsyncHttpQuery(string url)
         {
             ParseUrlInternal(url);
@@ -349,7 +317,7 @@ namespace SS.Toolkit.Http
                     {
                         this.Add(System.Uri.UnescapeDataString(s.Substring(0, idx)), System.Uri.UnescapeDataString(s.Substring(idx + 1)));
                     }
-                    catch (Exception ex)
+                    catch
                     {
 
                     }
@@ -359,121 +327,6 @@ namespace SS.Toolkit.Http
             {
                 throw new FormatException("URL格式错误", ex);
             }
-        }
-    }
-    public class AsyncHttpResponse : IDisposable
-    {
-        protected byte[] Data { get; private set; }
-
-        public Dictionary<string, string> Headers { get; private set; }
-        public AsyncHttpCookies Cookies { get; private set; }
-
-        public HttpStatusCode StatusCode { get; private set; }
-        public Encoding Encoding { get; private set; }
-        public Exception Exception { get; private set; }
-
-
-        internal AsyncHttpResponse(HttpResponseMessage rsp, string encoding)
-        {
-            this.StatusCode = rsp.StatusCode;
-            this.Encoding = Encoding.GetEncoding(encoding ?? "UTF-8");
-            this.Headers = new Dictionary<string, string>();
-            this.Cookies = null;
-            this.Exception = null;
-            Init(rsp);
-        }
-
-        internal AsyncHttpResponse(Exception exp, string encoding)
-        {
-            this.StatusCode = 0;
-            this.Encoding = Encoding.GetEncoding(encoding ?? "UTF-8");
-            this.Headers = new Dictionary<string, string>();
-            this.Cookies = null;
-            this.Exception = exp;
-        }
-
-        protected async void Init(HttpResponseMessage rsp)
-        {
-            if (rsp.StatusCode == HttpStatusCode.OK)
-            {
-                this.Data = await rsp.Content.ReadAsByteArrayAsync();
-            }
-            if (rsp.Headers != null)
-            {
-                foreach (var kv in rsp.Headers)
-                {
-                    if ("Set-Cookie".Equals(kv.Key))
-                    {
-                        if (Cookies == null)
-                        {
-                            Cookies = new AsyncHttpCookies();
-                        }
-                        foreach (var item in kv.Value)
-                        {
-                            AsyncHttpCookie cookie = new AsyncHttpCookie(item);
-                            Cookies.Add(cookie);
-                        }
-                        //var test = string.Join(";", kv.Value);
-                    }
-
-                    Headers[kv.Key] = string.Join(";", kv.Value);
-                }
-            }
-            StatusCode = rsp.StatusCode;
-            RequestMessage = rsp.RequestMessage;
-        }
-
-        public HttpRequestMessage RequestMessage { get; private set; }
-
-        //public async Task<IRandomAccessStream> GetRandomStream()
-        //{
-        //    if (Data == null)
-        //    {
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        var buffer = this.GetBuffer();
-        //        InMemoryRandomAccessStream inStream = new InMemoryRandomAccessStream();
-        //        DataWriter datawriter = new DataWriter(inStream.GetOutputStreamAt(0));
-        //        datawriter.WriteBuffer(buffer, 0, buffer.Length);
-        //        await datawriter.StoreAsync();
-        //        return inStream;
-        //    }
-
-        //}
-
-        //public IBuffer GetBuffer()
-        //{
-        //    if (Data == null)
-        //        return null;
-        //    else
-        //        return WindowsRuntimeBufferExtensions.AsBuffer(Data);
-        //}
-
-        public byte[] GetBytes()
-        {
-            if (Data == null)
-                return null;
-            else
-                return Data;
-        }
-
-        public string GetString()
-        {
-            if (Data == null)
-                return null;
-            else
-                return Encoding.GetString(Data);
-        }
-
-        public void Dispose()
-        {
-            Data = null;
-            Headers = null;
-            Cookies = null;
-            Encoding = null;
-            Exception = null;
         }
     }
 }
