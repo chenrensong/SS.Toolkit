@@ -14,7 +14,7 @@ namespace SS.Toolkit.Http
         private Dictionary<string, string> _headers;
         private string _encoding;
 
-        private CookieContainer _cookieContainer;
+        private CookieContainerBuilder _cookieContainerBuilder;
         private bool? _expectContinue;
         private bool? _allowAutoRedirect;
         private TimeSpan? _timeout;
@@ -108,23 +108,23 @@ namespace SS.Toolkit.Http
         {
             if (cookies != null)
             {
-                _cookieContainer = AsyncCookieContainer.Create(cookies).ToCookieContainer();
+                _cookieContainerBuilder = CookieContainerBuilder.Create(cookies);
             }
             return this;
         }
 
-        public AsyncHttpClient Cookies(AsyncCookieContainer acc)
+        public AsyncHttpClient Cookies(AsyncCookieContainer cookies)
         {
-            if (acc != null)
+            if (cookies != null)
             {
-                _cookieContainer = acc.ToCookieContainer();
+                _cookieContainerBuilder = CookieContainerBuilder.Create(cookies);
             }
             return this;
         }
 
-        public AsyncHttpClient Cookies(CookieContainer cookieContainer)
+        public AsyncHttpClient Cookies(CookieContainer cookies)
         {
-            _cookieContainer = cookieContainer;
+            _cookieContainerBuilder = CookieContainerBuilder.Create(cookies);
             return this;
         }
 
@@ -250,10 +250,11 @@ namespace SS.Toolkit.Http
         private HttpClient DoBuildHttpClient()
         {
             var clientHandler = new HttpClientHandler();
-            if (_cookieContainer != null)
+            if (_cookieContainerBuilder != null)
             {
                 clientHandler.UseCookies = true;
-                clientHandler.CookieContainer = _cookieContainer;
+                //需要用到Uri来确定Domain,否则会出错~
+                clientHandler.CookieContainer = _cookieContainerBuilder.Builder(_uri);
             }
             if (_automaticDecompression.HasValue)
             {

@@ -79,15 +79,6 @@ namespace SS.Toolkit.Http
             }
         }
 
-        internal CookieContainer ToCookieContainer()
-        {
-            CookieContainer cc = new CookieContainer();
-            foreach (var item in this)
-            {
-                cc.Add(new Cookie(item.Value.Name, item.Value.Value, "/", ".alimama.com"));
-            }
-            return cc;
-        }
 
         public override string ToString()
         {

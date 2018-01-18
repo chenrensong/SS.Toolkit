@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>1.3.0</Version>
+    <Version>1.3.2</Version>
     <Authors>chenrensong</Authors>
     <PackageProjectUrl>https://github.com/chenrensong/SS.Toolkit</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
@@ -11,7 +11,7 @@
     <PackageId>SS.Toolkit</PackageId>
     <PackageTags>toolkit</PackageTags>
     <RepositoryUrl>git://github.com/chenrensong/SS.Toolkit</RepositoryUrl>
-    <Description>提供.NET Standard / .NET Core 常用的开发工具类，包括图像处理，安全校验等。</Description>
+    <Description>提供.NET Standard / .NET Core 常用的开发工具类，包括网络请求，图像处理，安全校验等。</Description>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
