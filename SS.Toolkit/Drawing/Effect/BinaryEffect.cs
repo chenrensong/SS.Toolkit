@@ -9,9 +9,9 @@ namespace SS.Toolkit.Drawing.Effect
     /// <summary>
     /// 二值化处理
     /// </summary>
-    public class BinaryEffect : IImageEffect<ImageResult>
+    public class BinaryEffect : IImageFilterEffect
     {
-        public ImageResult Execute(Bitmap bitmap)
+        public Bitmap Execute(Bitmap bitmap)
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
@@ -33,7 +33,7 @@ namespace SS.Toolkit.Drawing.Effect
                 }
             }
             bitmap.UnlockBits(bdata);
-            return new ImageResult(bitmap);
+            return bitmap;
         }
     }
 }

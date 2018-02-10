@@ -9,7 +9,7 @@ namespace SS.Toolkit.Drawing.Effect
     /// <summary>
     /// 大水滴法
     /// </summary>
-    public class SegWaterDropEffect : IImageEffect<ImageResult>
+    public class SegWaterDropEffect : IImageSplitEffect
     {
 
         private int minD = 12;//最小字符宽度
@@ -18,13 +18,12 @@ namespace SS.Toolkit.Drawing.Effect
 
         private int b = 1;//大水滴的宽度 2*B+1,取0或者1效果最好
 
-        private List<Bitmap> imageList;
         private Bitmap sourceImage;
 
 
         public SegWaterDropEffect()
         {
-            imageList = new List<Bitmap>();
+
         }
 
 
@@ -33,9 +32,9 @@ namespace SS.Toolkit.Drawing.Effect
          * @param sourceImage
          * @return 切割完图片的数组
          */
-        public ImageResult Execute(Bitmap sourceImage)
+        public IList<Bitmap> Execute(Bitmap sourceImage)
         {
-            imageList.Clear();
+            var imageList = new List<Bitmap>();
             this.sourceImage = sourceImage;
 
             int width = sourceImage.Width;
@@ -92,15 +91,13 @@ namespace SS.Toolkit.Drawing.Effect
                     continue;
                 }
 
-                Console.WriteLine("测试");
-
                 //			//判断当前分割点与末尾结束点的位置是否合法
                 //			int dAll = width - curP + 1;
                 //			if (dAll < minD*(num - curSplit) || dAll > maxD*(num - curSplit)) {
                 //				continue;
                 //			}
                 endRoute = getEndRoute(new Point(curP, 0), height, curSplit);
-                doSplit(startRoute, endRoute);
+                doSplit(imageList, startRoute, endRoute);
                 startRoute = endRoute;
                 lastP = curP;
                 curSplit++;
@@ -112,13 +109,12 @@ namespace SS.Toolkit.Drawing.Effect
             {
                 endRoute[y] = new Point(width - 1, y);
             }
-            doSplit(startRoute, endRoute);
-
+            doSplit(imageList, startRoute, endRoute);
 
             Console.WriteLine("=================");
             Console.WriteLine(width + "," + height);
 
-            return new ImageResult(this.imageList);
+            return imageList;
         }
 
         /**
@@ -261,7 +257,7 @@ namespace SS.Toolkit.Drawing.Effect
          * @param starts
          * @param ends
          */
-        private void doSplit(Point[] starts, Point[] ends)
+        private void doSplit(IList<Bitmap> imageList, Point[] starts, Point[] ends)
         {
             int left = starts[0].X;
             int top = starts[0].Y;
@@ -301,7 +297,7 @@ namespace SS.Toolkit.Drawing.Effect
                 }
 
             }
-            this.imageList.Add(image);
+            imageList.Add(image);
 
             Console.WriteLine("-----------------------");
 

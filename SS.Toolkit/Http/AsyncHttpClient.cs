@@ -173,9 +173,13 @@ namespace SS.Toolkit.Http
 
         public async Task<AsyncHttpResponse> Get()
         {
+            return await GetInternal();
+        }
 
+
+        private async Task<AsyncHttpResponse> GetInternal()
+        {
             var client = DoBuildHttpClient();
-
             try
             {
                 using (var rsp = await client.GetAsync(_uri))
@@ -195,17 +199,7 @@ namespace SS.Toolkit.Http
 
             var postData = new ByteArrayContent(args);
 
-            try
-            {
-                using (var rsp = await client.PostAsync(_uri, postData))
-                {
-                    return new AsyncHttpResponse(rsp, _encoding);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new AsyncHttpResponse(ex, _encoding);
-            }
+            return await PostInternal(client, postData);
         }
 
 
@@ -215,17 +209,7 @@ namespace SS.Toolkit.Http
 
             var postData = new StringContent(args, System.Text.Encoding.UTF8, "application/json");
 
-            try
-            {
-                using (var rsp = await client.PostAsync(_uri, postData))
-                {
-                    return new AsyncHttpResponse(rsp, _encoding);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new AsyncHttpResponse(ex, _encoding);
-            }
+            return await PostInternal(client, postData);
         }
 
         public async Task<AsyncHttpResponse> Post(Dictionary<string, string> args)
@@ -234,6 +218,11 @@ namespace SS.Toolkit.Http
 
             var postData = new FormUrlEncodedContent(args);
 
+            return await PostInternal(client, postData);
+        }
+
+        private async Task<AsyncHttpResponse> PostInternal(HttpClient client, ByteArrayContent postData)
+        {
             try
             {
                 using (var rsp = await client.PostAsync(_uri, postData))
@@ -246,6 +235,8 @@ namespace SS.Toolkit.Http
                 return new AsyncHttpResponse(ex, _encoding);
             }
         }
+
+
 
         private HttpClient DoBuildHttpClient()
         {

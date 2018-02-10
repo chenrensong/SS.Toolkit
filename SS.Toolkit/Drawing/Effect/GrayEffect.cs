@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SS.Toolkit.Drawing.Effect
 {
-    public class GrayEffect : IImageEffect<ImageResult>
+    public class GrayEffect : IImageFilterEffect
     {
         private GrayEffectType _grayEffectType;
 
@@ -20,7 +20,7 @@ namespace SS.Toolkit.Drawing.Effect
         }
 
 
-        public ImageResult Execute(Bitmap bitmap)
+        public Bitmap Execute(Bitmap bitmap)
         {
             Func<int, int, int, int> getGrayValue;
             switch (_grayEffectType)
@@ -53,7 +53,7 @@ namespace SS.Toolkit.Drawing.Effect
                 }
             }
             bitmap.UnlockBits(bdata);
-            return new ImageResult(bitmap);
+            return bitmap;
         }
 
         /// <summary>

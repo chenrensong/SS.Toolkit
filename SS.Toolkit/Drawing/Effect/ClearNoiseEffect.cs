@@ -10,7 +10,7 @@ namespace SS.Toolkit.Drawing.Effect
     /// <summary>
     /// 清除噪点
     /// </summary>
-    public class ClearNoiseEffect : IImageEffect<ImageResult>
+    public class ClearNoiseEffect : IImageFilterEffect
     {
         private int _maxAroundPoints = 1;
 
@@ -19,7 +19,7 @@ namespace SS.Toolkit.Drawing.Effect
             _maxAroundPoints = maxAroundPoints;
         }
 
-        public ImageResult Execute(Bitmap bitmap)
+        public Bitmap Execute(Bitmap bitmap)
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
@@ -67,7 +67,7 @@ namespace SS.Toolkit.Drawing.Effect
 
             #endregion
 
-            return new ImageResult(bitmap);
+            return bitmap;
         }
     }
 }

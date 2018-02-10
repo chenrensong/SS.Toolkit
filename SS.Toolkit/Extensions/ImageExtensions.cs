@@ -11,7 +11,7 @@ using System.DrawingCore.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace SS.Toolkit.Drawing
+namespace SS.Toolkit.Extensions
 {
     /// <summary>
     /// Bitmap Extension 

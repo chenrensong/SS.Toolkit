@@ -9,7 +9,7 @@ namespace SS.Toolkit.Drawing.Effect
     /// <summary>
     /// 缩放图片
     /// </summary>
-    public class ScaleEffect : IImageEffect<ImageResult>
+    public class ScaleEffect : IImageFilterEffect
     {
         private double _scale = 1;
         private int _width = 0;
@@ -26,7 +26,7 @@ namespace SS.Toolkit.Drawing.Effect
             _width = width;
         }
 
-        public ImageResult Execute(Bitmap bitmap)
+        public Bitmap Execute(Bitmap bitmap)
         {
             int w = (int)(bitmap.Width * _scale);
             int h = (int)(bitmap.Height * _scale);
@@ -48,7 +48,7 @@ namespace SS.Toolkit.Drawing.Effect
                 g.DrawImage(bitmap, new Rectangle(0, 0, w, h), new Rectangle(0, 0, bitmap.Width, bitmap.Height), GraphicsUnit.Pixel);
                 g.Flush();
             }
-            return new ImageResult(cloneBitmap);
+            return cloneBitmap;
         }
     }
 }

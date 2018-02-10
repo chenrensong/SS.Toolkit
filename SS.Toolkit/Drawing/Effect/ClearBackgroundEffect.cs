@@ -7,11 +7,11 @@ using System.Text;
 namespace SS.Toolkit.Drawing.Effect
 {
     /// <summary>
-    /// 清除配置
+    /// 清除背景
     /// </summary>
-    public class ClearBackgroundEffect : IImageEffect<ImageResult>
+    public class ClearBackgroundEffect : IImageFilterEffect
     {
-        public ImageResult Execute(Bitmap bitmap)
+        public Bitmap Execute(Bitmap bitmap)
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
@@ -59,7 +59,7 @@ namespace SS.Toolkit.Drawing.Effect
             #endregion
             //从内存中解锁
             bitmap.UnlockBits(bdata);
-            return new ImageResult(bitmap);
+            return bitmap;
         }
 
         /// <summary>

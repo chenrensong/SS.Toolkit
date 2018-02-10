@@ -5,24 +5,15 @@ using System.Text;
 
 namespace SS.Toolkit.Drawing.Effect
 {
-    public class SegCfgEffect : IImageEffect<ImageResult>
+    /// <summary>
+    /// 用于一般图片分割
+    /// </summary>
+    public class SegCfgEffect : IImageSplitEffect
     {
-        /**
-	 * cfg 分割出来的结果
-	 */
-        private List<Bitmap> cfgList;
 
         public SegCfgEffect()
         {
-            init();
         }
-
-
-        private void init()
-        {
-            cfgList = new List<Bitmap>();
-        }
-
 
         /**
          * cfs进行分割,返回分割后的数组
@@ -30,9 +21,9 @@ namespace SS.Toolkit.Drawing.Effect
          * @return
          */
 
-        public ImageResult Execute(Bitmap sourceImage)
+        public IList<Bitmap> Execute(Bitmap sourceImage)
         {
-            this.cfgList.Clear();
+            var cfgList = new List<Bitmap>();
             int width = sourceImage.Width;
             int height = sourceImage.Height;
 
@@ -104,13 +95,12 @@ namespace SS.Toolkit.Drawing.Effect
                 }
             }
 
-            //System.out.println();
-            cfsToImage(subImgList);
-            return new ImageResult(this.cfgList);
+            cfsToImage(cfgList, subImgList);
+            return cfgList;
         }
 
 
-        private void cfsToImage(List<ImageCanvas> subImgList)
+        private void cfsToImage(List<Bitmap> cfgList, List<ImageCanvas> subImgList)
         {
             for (int i = 0; i < subImgList.Count; i++)
             {
@@ -131,7 +121,7 @@ namespace SS.Toolkit.Drawing.Effect
                 }
 
                 //将切割的中间图片加入到cfgList中
-                this.cfgList.Add(image);
+                cfgList.Add(image);
             }
         }
 
