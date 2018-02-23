@@ -6,6 +6,26 @@ namespace SS.Toolkit.Helpers
 {
     public class StringHelper
     {
+        /// <summary>
+        /// 获取错误信息
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        public static string GetErrorInfo(Exception ex)
+        {
+            StringBuilder msg = new StringBuilder();
+            msg.Append("*************************************** \n");
+            msg.AppendFormat(" 异常发生时间： {0} \n", DateTime.Now);
+            msg.AppendFormat(" 异常类型： {0} \n", ex.HResult);
+            msg.AppendFormat(" 导致当前异常的 Exception 实例： {0} \n", ex.InnerException);
+            msg.AppendFormat(" 导致异常的应用程序或对象的名称： {0} \n", ex.Source);
+            msg.AppendFormat(" 引发异常的方法： {0} \n", ex.TargetSite);
+            msg.AppendFormat(" 异常堆栈信息： {0} \n", ex.StackTrace);
+            msg.AppendFormat(" 异常消息： {0} \n", ex.Message);
+            msg.Append("***************************************");
+            return msg.ToString();
+        }
+
         public static string ToUnderlineStyle(string name)
         {
             if (string.IsNullOrEmpty(name))

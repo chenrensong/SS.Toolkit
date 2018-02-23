@@ -101,7 +101,9 @@ namespace SS.Toolkit.Json
                 InlineCircularReferences = true;
             }
             if (EnableAnonymousTypes)
+            {
                 ShowReadOnlyProperties = true;
+            }
         }
     }
 
@@ -120,7 +122,6 @@ namespace SS.Toolkit.Json
         public static string ToNiceJSON(object obj, JSONParameters param)
         {
             string s = ToJSON(obj, param);
-
             return Beautify(s);
         }
         /// <summary>

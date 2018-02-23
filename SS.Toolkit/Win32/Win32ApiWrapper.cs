@@ -11,7 +11,7 @@ namespace SS.Toolkit.Win32
     //http://en.verysource.com/code/2755298_1/sendkey.cs.html
     //https://www.cnblogs.com/zzh1236/archive/2013/07/18/3198517.html
     //https://www.cnblogs.com/Joetao/articles/5844131.html
-    public class Win32ApiWrapper
+    public class Win32APIWrapper
     {
 
         public static int IDM_VIEWSOURCE = 2139;
@@ -55,11 +55,31 @@ namespace SS.Toolkit.Win32
         public static readonly int MOUSEEVENTF_MIDDLEDOWN = 0x0020; //中键按下 
         public static readonly int MOUSEEVENTF_MIDDLEUP = 0x0040;// 中键抬起 
 
+
+        public static readonly int URLMON_OPTION_USERAGENT = 0x10000001;
+
+        [DllImport("urlmon.dll", CharSet = CharSet.Ansi)]
+        internal static extern int UrlMkSetSessionOption(int dwOption, string pBuffer, int dwBufferLength, int dwReserved);
+
+        /// <summary>
+        /// 获取当前WebBrowser登录后的Cookie字符串
+        /// </summary>
+        /// <param name="pchUrl"></param>
+        /// <param name="pchCookieName"></param>
+        /// <param name="pchCookieData"></param>
+        /// <param name="pcchCookieData"></param>
+        /// <param name="dwFlags"></param>
+        /// <param name="lpReserved"></param>
+        /// <returns></returns>
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern bool InternetGetCookieEx(string pchUrl, string pchCookieName, StringBuilder pchCookieData, ref System.UInt32 pcchCookieData, int dwFlags, IntPtr lpReserved);
+
+
         private static Dictionary<string, byte> keycode = new Dictionary<string, byte>();
 
         public delegate bool WNDENUMPROC(IntPtr hWnd, int lParam);
 
-        static Win32ApiWrapper()
+        static Win32APIWrapper()
         {
             keycode.Add("A", 65);
             keycode.Add("B", 66);
@@ -127,7 +147,6 @@ namespace SS.Toolkit.Win32
         /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern int mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-
 
         [DllImport("Gdi32.dll")]
         public extern static int BitBlt(IntPtr hDC, int x, int y, int nWidth, int nHeight, IntPtr hSrcDC, int xSrc, int ySrc, int dwRop);

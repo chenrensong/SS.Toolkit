@@ -48,7 +48,21 @@ namespace SS.Toolkit.Extensions
             }
         }
 
+        /// <summary>
+        /// 返回S
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static long CurrentTimeSeconds(this DateTime d)
+        {
+            return (long)((DateTime.UtcNow - Jan1st1970).TotalSeconds);
+        }
 
+        /// <summary>
+        /// 返回毫秒
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
         public static long CurrentTimeMillis(this DateTime d)
         {
             return (long)((DateTime.UtcNow - Jan1st1970).TotalMilliseconds);
@@ -57,11 +71,11 @@ namespace SS.Toolkit.Extensions
         public static DateTime ToDateTime(this long t)
         {
             DateTime time = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            if (t.ToString().Length == 10)
+            if (t.ToString().Length == 10) // 秒
             {
                 return time.AddSeconds(t).ToLocalTime();
             }
-            else
+            else //毫秒
             {
                 return time.AddMilliseconds(t).ToLocalTime();
             }

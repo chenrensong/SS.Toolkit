@@ -17,7 +17,7 @@ namespace SS.Toolkit.Win32
         /// <returns></returns>
         public static IntPtr GetHandle(string IpClassName)
         {
-            return Win32ApiWrapper.FindWindow(IpClassName, null);
+            return Win32APIWrapper.FindWindow(IpClassName, null);
         }
 
         /// <summary>
@@ -27,14 +27,14 @@ namespace SS.Toolkit.Win32
         /// <returns></returns>
         public static IntPtr GetHandle(Point p)
         {
-            return Win32ApiWrapper.WindowFromPoint(p);
+            return Win32APIWrapper.WindowFromPoint(p);
         }
 
         //鼠标位置的坐标
         public static Point GetCursorPosPoint()
         {
             Point p = new Point();
-            if (Win32ApiWrapper.GetCursorPos(out p))
+            if (Win32APIWrapper.GetCursorPos(out p))
             {
                 return p;
             }
@@ -50,7 +50,7 @@ namespace SS.Toolkit.Win32
         /// <returns></returns>
         public static IntPtr GetChildHandle(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass)
         {
-            return Win32ApiWrapper.FindWindowEx(hwndParent, hwndChildAfter, lpszClass, null);
+            return Win32APIWrapper.FindWindowEx(hwndParent, hwndChildAfter, lpszClass, null);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace SS.Toolkit.Win32
         /// <param name="lParam">要发送的内容</param>
         public static void SetText(IntPtr hWnd, string lParam)
         {
-            Win32ApiWrapper.SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, lParam);
+            Win32APIWrapper.SendMessage(hWnd, WM_SETTEXT, IntPtr.Zero, lParam);
         }
 
         private const int WM_SETTEXT = 0x000C;
@@ -89,7 +89,7 @@ namespace SS.Toolkit.Win32
         public static string GetText(IntPtr hWnd)
         {
             StringBuilder result = new StringBuilder(128);
-            Win32ApiWrapper.GetWindowText(hWnd, result, result.Capacity);
+            Win32APIWrapper.GetWindowText(hWnd, result, result.Capacity);
             return result.ToString();
         }
 
@@ -101,7 +101,7 @@ namespace SS.Toolkit.Win32
         public static string GetClassName(IntPtr hWnd)
         {
             StringBuilder lpClassName = new StringBuilder(128);
-            if (Win32ApiWrapper.GetClassName(hWnd, lpClassName, lpClassName.Capacity) == 0)
+            if (Win32APIWrapper.GetClassName(hWnd, lpClassName, lpClassName.Capacity) == 0)
             {
                 throw new Exception("not found IntPtr!");
             }
@@ -116,7 +116,7 @@ namespace SS.Toolkit.Win32
         public static Rectangle GetWindowRect(IntPtr hWnd)
         {
             Rectangle result = default(Rectangle);
-            Win32ApiWrapper.GetWindowRect(hWnd, ref result);
+            Win32APIWrapper.GetWindowRect(hWnd, ref result);
             return result;
         }
 
@@ -129,7 +129,7 @@ namespace SS.Toolkit.Win32
         public static Rectangle ScreenToClient(IntPtr hWnd, Rectangle rect)
         {
             Rectangle result = rect;
-            Win32ApiWrapper.ScreenToClient(hWnd, ref result);
+            Win32APIWrapper.ScreenToClient(hWnd, ref result);
             return result;
         }
 
@@ -141,13 +141,13 @@ namespace SS.Toolkit.Win32
         public static Rectangle GetClientRect(IntPtr hWnd)
         {
             Rectangle result = default(Rectangle);
-            Win32ApiWrapper.GetClientRect(hWnd, ref result);
+            Win32APIWrapper.GetClientRect(hWnd, ref result);
             return result;
         }
 
         public static void GetInfo(IntPtr vHandle)
         {
-            Win32ApiWrapper.SendMessage(vHandle, Win32ApiWrapper.WM_COMMAND, Win32ApiWrapper.IDM_VIEWSOURCE, (int)vHandle);
+            Win32APIWrapper.SendMessage(vHandle, Win32APIWrapper.WM_COMMAND, Win32APIWrapper.IDM_VIEWSOURCE, (int)vHandle);
         }
 
         /// <summary>
@@ -159,15 +159,15 @@ namespace SS.Toolkit.Win32
         /// <returns></returns>
         public static int DeviceMouseEvent(int dwFlags, int dx, int dy)
         {
-            return Win32ApiWrapper.mouse_event(dwFlags, dx, dy, 0, 0);
+            return Win32APIWrapper.mouse_event(dwFlags, dx, dy, 0, 0);
         }
 
         public static void MouseClick(IntPtr vHandle, int x, int y)
         {
             var lParam = ((y << 16) | x); // The coordinates 
             var wParam = 0; // Additional parameters for the click (e.g. Ctrl) 
-            Win32ApiWrapper.SendMessage(vHandle, Win32ApiWrapper.WM_LBUTTONDOWN, wParam, lParam); // Mouse button down 
-            Win32ApiWrapper.SendMessage(vHandle, Win32ApiWrapper.WM_LBUTTONUP, wParam, lParam); // Mouse button up 
+            Win32APIWrapper.SendMessage(vHandle, Win32APIWrapper.WM_LBUTTONDOWN, wParam, lParam); // Mouse button down 
+            Win32APIWrapper.SendMessage(vHandle, Win32APIWrapper.WM_LBUTTONUP, wParam, lParam); // Mouse button up 
             //SendMessage(handle, upCode, wParam, lParam); // Mouse button up 
         }
 
@@ -175,7 +175,7 @@ namespace SS.Toolkit.Win32
         {
             var lParam = ((y << 16) | x); // The coordinates 
             var wParam = 0; // Additional parameters for the click (e.g. Ctrl) 
-            Win32ApiWrapper.SendMessage(vHandle, msg, wParam, lParam); // Mouse button down 
+            Win32APIWrapper.SendMessage(vHandle, msg, wParam, lParam); // Mouse button down 
             //SendMessage(vHandle, Win32ApiWrapper.WM_LBUTTONUP, wParam, lParam); // Mouse button up 
             //SendMessage(handle, upCode, wParam, lParam); // Mouse button up 
         }
@@ -194,14 +194,14 @@ namespace SS.Toolkit.Win32
         public static WindowInfo[] GetAllDesktopWindows()
         {
             List<WindowInfo> wndList = new List<WindowInfo>();
-            Win32ApiWrapper.EnumWindows(delegate (IntPtr hWnd, int lParam)
+            Win32APIWrapper.EnumWindows(delegate (IntPtr hWnd, int lParam)
             {
                 WindowInfo wnd = new WindowInfo();
                 StringBuilder sb = new StringBuilder(256);
                 wnd.hWnd = hWnd;
-                Win32ApiWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
+                Win32APIWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
                 wnd.SzWindowName = sb.ToString();
-                Win32ApiWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
+                Win32APIWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
                 wnd.SzClassName = sb.ToString();
                 wndList.Add(wnd);
                 return true;
@@ -213,14 +213,14 @@ namespace SS.Toolkit.Win32
         public static List<WindowInfo> GetWindowByParentHwndAndClassName(IntPtr parentHwnd, string className)
         {
             List<WindowInfo> wndList = new List<WindowInfo>();
-            Win32ApiWrapper.EnumChildWindows(parentHwnd, delegate (IntPtr hWnd, int lParam)
+            Win32APIWrapper.EnumChildWindows(parentHwnd, delegate (IntPtr hWnd, int lParam)
            {
                WindowInfo wnd = new WindowInfo();
                StringBuilder sb = new StringBuilder(256);
                wnd.hWnd = hWnd;
-               Win32ApiWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
+               Win32APIWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
                wnd.SzWindowName = sb.ToString();
-               Win32ApiWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
+               Win32APIWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
                wnd.SzClassName = sb.ToString();
                wndList.Add(wnd);
                return true;
@@ -231,14 +231,14 @@ namespace SS.Toolkit.Win32
         public static List<WindowInfo> GetChildWindowsByParentHwnd(IntPtr parentHwnd)
         {
             List<WindowInfo> childWndList = new List<WindowInfo>();
-            Win32ApiWrapper.EnumChildWindows(parentHwnd, delegate (IntPtr hWnd, int lParam)
+            Win32APIWrapper.EnumChildWindows(parentHwnd, delegate (IntPtr hWnd, int lParam)
             {
                 WindowInfo wnd = new WindowInfo();
                 StringBuilder sb = new StringBuilder(256);
                 wnd.hWnd = hWnd;
-                Win32ApiWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
+                Win32APIWrapper.GetWindowTextW(hWnd, sb, sb.Capacity);
                 wnd.SzWindowName = sb.ToString();
-                Win32ApiWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
+                Win32APIWrapper.GetClassNameW(hWnd, sb, sb.Capacity);
                 wnd.SzClassName = sb.ToString();
                 childWndList.Add(wnd);
                 return true;
@@ -246,6 +246,54 @@ namespace SS.Toolkit.Win32
 
             return childWndList;
         }
+
+
+        /// <summary>
+        /// 获取某 URL 的 Cookie 返回字符串
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <returns></returns>
+        public static string GetCookie(string Url)
+        {
+            uint Datasize = 1024;
+            StringBuilder cookieData = new StringBuilder((int)Datasize);
+            if (!Win32APIWrapper.InternetGetCookieEx(Url, null, cookieData, ref Datasize, 0x2000, IntPtr.Zero))
+            {
+                if (Datasize < 0)
+                {
+                    return null;
+                }
+                cookieData = new StringBuilder((int)Datasize);
+                if (!Win32APIWrapper.InternetGetCookieEx(Url, null, cookieData, ref Datasize, 0x00002000, IntPtr.Zero))
+                {
+                    return null;
+                }
+            }
+            return cookieData.ToString();
+        }
+
+        /// <summary>
+        /// 修改UserAgent
+        /// </summary>
+        public static void SetUserAgent(string userAgent)
+        {
+            Win32APIWrapper.UrlMkSetSessionOption(Win32APIWrapper.URLMON_OPTION_USERAGENT, userAgent, userAgent.Length, 0);
+        }
+
+        //private static string GetDefaultUserAgent()
+        //{
+        //    WebBrowser wb = new WebBrowser();
+        //    wb.Navigate("about:blank");
+        //    while (wb.IsBusy) Application.DoEvents();
+        //    object window = wb.Document.Window.DomWindow;
+        //    Type wt = window.GetType();
+        //    object navigator = wt.InvokeMember("navigator", BindingFlags.GetProperty,
+        //        null, window, new object[] { });
+        //    Type nt = navigator.GetType();
+        //    object userAgent = nt.InvokeMember("userAgent", BindingFlags.GetProperty,
+        //        null, navigator, new object[] { });
+        //    return userAgent.ToString();
+        //}
 
         #endregion
 
