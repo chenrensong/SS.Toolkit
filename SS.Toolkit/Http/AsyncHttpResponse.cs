@@ -10,6 +10,10 @@ namespace SS.Toolkit.Http
     {
         protected byte[] Data { get; private set; }
         public Dictionary<string, string> Headers { get; private set; }
+        /// <summary>
+        /// 过期属性
+        /// </summary>
+        //[Obsolete]
         public AsyncCookieContainer Cookies { get; private set; }
         public HttpStatusCode StatusCode { get; private set; }
         public Encoding Encoding { get; private set; }

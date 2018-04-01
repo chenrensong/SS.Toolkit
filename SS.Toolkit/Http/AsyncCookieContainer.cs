@@ -5,8 +5,31 @@ using System.Collections;
 
 namespace SS.Toolkit.Http
 {
-    public class AsyncCookieContainer : SortedDictionary<string, AsyncCookie>
+    public class AsyncCookieContainer
     {
+
+        private readonly List<AsyncCookie> _CookieList = new List<AsyncCookie>();
+
+        public AsyncCookie this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= _CookieList.Count)
+                {
+                    throw new ArgumentOutOfRangeException("index");
+                }
+                return _CookieList[index];
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return _CookieList.Count;
+            }
+        }
+
         public static AsyncCookieContainer Create(string cookies)
         {
             AsyncCookieContainer acc = new AsyncCookieContainer();
@@ -47,7 +70,7 @@ namespace SS.Toolkit.Http
         public static AsyncCookieContainer Create(CookieContainer cc)
         {
             AsyncCookieContainer acc = new AsyncCookieContainer();
-            List<Cookie> lstCookies = new List<Cookie>();
+            List<Cookie> listCookies = new List<Cookie>();
             Hashtable table = (Hashtable)cc.GetType().InvokeMember("m_domainTable",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.Instance, null, cc, new object[] { });
@@ -58,9 +81,9 @@ namespace SS.Toolkit.Http
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.GetField
                     | System.Reflection.BindingFlags.Instance, null, pathList, new object[] { });
                 foreach (CookieCollection colCookies in lstCookieCol.Values)
-                    foreach (Cookie c in colCookies) lstCookies.Add(c);
+                    foreach (Cookie c in colCookies) listCookies.Add(c);
             }
-            foreach (Cookie cookie in lstCookies)
+            foreach (Cookie cookie in listCookies)
             {
                 acc.Add(new AsyncCookie() { Name = cookie.Name, Value = cookie.Value, Domain = cookie.Domain, Path = cookie.Path });
             }
@@ -71,7 +94,7 @@ namespace SS.Toolkit.Http
         {
             try
             {
-                this.Add(cookie.Name, cookie);
+                this._CookieList.Add(cookie);
             }
             catch (Exception ex)
             {
@@ -79,10 +102,19 @@ namespace SS.Toolkit.Http
             }
         }
 
+        public CookieContainer ToCookieContainer(Uri uri)
+        {
+            CookieContainer cc = new CookieContainer();
+            foreach (var item in _CookieList)
+            {
+                cc.Add(new Cookie(item.Name, item.Value, "/", uri.Host));
+            }
+            return cc;
+        }
 
         public override string ToString()
         {
-            return string.Join(";", this.Values);
+            return string.Join(";", this._CookieList);
         }
 
     }

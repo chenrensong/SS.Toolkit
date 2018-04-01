@@ -8,17 +8,31 @@ using System.Net;
 namespace SS.Toolkit.Http
 {
 
-    public class AsyncHttpClient
+    public class AsyncHttpClient : IDisposable
     {
+        private bool _disposed;
         private Uri _uri;
         private Dictionary<string, string> _headers;
         private string _encoding;
 
+        private CookieContainer _cookieContainer;
         private CookieContainerBuilder _cookieContainerBuilder;
         private bool? _expectContinue;
         private bool? _allowAutoRedirect;
         private TimeSpan? _timeout;
         private DecompressionMethods? _automaticDecompression;
+
+
+        /// <summary>
+        /// 只读属性
+        /// </summary>
+        public CookieContainer CookieContainer
+        {
+            get
+            {
+                return _cookieContainer;
+            }
+        }
 
         public Dictionary<string, string> Headers
         {
@@ -104,6 +118,7 @@ namespace SS.Toolkit.Http
             return this;
         }
 
+
         public AsyncHttpClient Cookies(string cookies)
         {
             if (cookies != null)
@@ -179,46 +194,48 @@ namespace SS.Toolkit.Http
 
         private async Task<AsyncHttpResponse> GetInternal()
         {
-            var client = DoBuildHttpClient();
-            try
+            using (var client = DoBuildHttpClient())
             {
-                using (var rsp = await client.GetAsync(_uri))
+                try
                 {
-                    return new AsyncHttpResponse(rsp, _encoding);
+                    using (var rsp = await client.GetAsync(_uri))
+                    {
+                        return new AsyncHttpResponse(rsp, _encoding);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                return new AsyncHttpResponse(ex, _encoding);
+                catch (Exception ex)
+                {
+                    return new AsyncHttpResponse(ex, _encoding);
+                }
             }
         }
 
         public async Task<AsyncHttpResponse> Post(byte[] args)
         {
-            var client = DoBuildHttpClient();
-
-            var postData = new ByteArrayContent(args);
-
-            return await PostInternal(client, postData);
+            using (var client = DoBuildHttpClient())
+            {
+                var postData = new ByteArrayContent(args);
+                return await PostInternal(client, postData);
+            }
         }
 
 
         public async Task<AsyncHttpResponse> Post(string args)
         {
-            var client = DoBuildHttpClient();
-
-            var postData = new StringContent(args, System.Text.Encoding.UTF8, "application/json");
-
-            return await PostInternal(client, postData);
+            using (var client = DoBuildHttpClient())
+            {
+                var postData = new StringContent(args, System.Text.Encoding.UTF8, "application/json");
+                return await PostInternal(client, postData);
+            }
         }
 
         public async Task<AsyncHttpResponse> Post(Dictionary<string, string> args)
         {
-            var client = DoBuildHttpClient();
-
-            var postData = new FormUrlEncodedContent(args);
-
-            return await PostInternal(client, postData);
+            using (var client = DoBuildHttpClient())
+            {
+                var postData = new FormUrlEncodedContent(args);
+                return await PostInternal(client, postData);
+            }
         }
 
         private async Task<AsyncHttpResponse> PostInternal(HttpClient client, ByteArrayContent postData)
@@ -241,12 +258,20 @@ namespace SS.Toolkit.Http
         private HttpClient DoBuildHttpClient()
         {
             var clientHandler = new HttpClientHandler();
+            clientHandler.UseCookies = true;
             if (_cookieContainerBuilder != null)
             {
-                clientHandler.UseCookies = true;
                 //需要用到Uri来确定Domain,否则会出错~
-                clientHandler.CookieContainer = _cookieContainerBuilder.Builder(_uri);
+                _cookieContainer = _cookieContainerBuilder.Builder(_uri);
+                _cookieContainerBuilder = null;//使用一次就不用了
             }
+
+            if (_cookieContainer == null)
+            {
+                _cookieContainer = new CookieContainer();
+            }
+            clientHandler.CookieContainer = _cookieContainer;
+
             if (_automaticDecompression.HasValue)
             {
                 clientHandler.AutomaticDecompression = _automaticDecompression.Value;
@@ -271,8 +296,38 @@ namespace SS.Toolkit.Http
                     client.DefaultRequestHeaders.Add(kv.Key, kv.Value);
                 }
             }
-
             return client;
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~AsyncHttpClient()
+        {
+            Dispose(false);
+        }
+
+        //这里的参数表示示是否需要释放那些实现IDisposable接口的托管对象
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return; //如果已经被回收，就中断执行
+            }
+            if (disposing)
+            {
+                //TODO:释放那些实现IDisposable接口的托管对象
+            }
+            //释放非托管资源，设置对象为null
+            _headers = null;
+            _cookieContainerBuilder = null;
+            _automaticDecompression = null;
+            _uri = null;
+            _disposed = true;
         }
     }
     public class AsyncHttpQuery : SortedDictionary<string, string>

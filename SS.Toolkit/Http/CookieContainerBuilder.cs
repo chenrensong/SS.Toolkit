@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace SS.Toolkit.Http
 {
@@ -24,12 +22,7 @@ namespace SS.Toolkit.Http
         {
             if (_asyncCookieContainer != null)
             {
-                CookieContainer cc = new CookieContainer();
-                foreach (var item in _asyncCookieContainer)
-                {
-                    cc.Add(new Cookie(item.Value.Name, item.Value.Value, "/", uri.Host));
-                }
-                return cc;
+                return _asyncCookieContainer.ToCookieContainer(uri);
             }
             else if (_cookieContainer != null)
             {
