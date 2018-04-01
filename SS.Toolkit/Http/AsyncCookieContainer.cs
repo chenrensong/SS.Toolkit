@@ -7,10 +7,24 @@ namespace SS.Toolkit.Http
 {
     public class AsyncCookieContainer
     {
+        private readonly List<Cookie> _CookieList = new List<Cookie>();
 
-        private readonly List<AsyncCookie> _CookieList = new List<AsyncCookie>();
+        public Cookie this[string name]
+        {
+            get
+            {
+                foreach (var c in _CookieList)
+                {
+                    if (string.Compare(c.Name, name, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return c;
+                    }
+                }
+                return null;
+            }
+        }
 
-        public AsyncCookie this[int index]
+        public Cookie this[int index]
         {
             get
             {
@@ -35,7 +49,7 @@ namespace SS.Toolkit.Http
             AsyncCookieContainer acc = new AsyncCookieContainer();
             string[] tempCookies = cookies.Split(';');
             string tempCookie = null;
-            int Equallength = 0;//  =的位置 
+            int equalLength = 0;//  =的位置 
             string cookieKey = null;
             string cookieValue = null;
             for (int i = 0; i < tempCookies.Length; i++)
@@ -43,17 +57,17 @@ namespace SS.Toolkit.Http
                 if (!string.IsNullOrEmpty(tempCookies[i]))
                 {
                     tempCookie = tempCookies[i];
-                    Equallength = tempCookie.IndexOf("=");
-                    if (Equallength != -1)       //有可能cookie 无=，就直接一个cookiename；比如:a=3;ck;abc=; 
+                    equalLength = tempCookie.IndexOf("=");
+                    if (equalLength != -1)       //有可能cookie 无=，就直接一个cookiename；比如:a=3;ck;abc=; 
                     {
-                        cookieKey = tempCookie.Substring(0, Equallength).Trim();
-                        if (Equallength == tempCookie.Length - 1)    //这种是等号后面无值，如：abc=; 
+                        cookieKey = tempCookie.Substring(0, equalLength).Trim();
+                        if (equalLength == tempCookie.Length - 1)    //这种是等号后面无值，如：abc=; 
                         {
                             cookieValue = string.Empty;
                         }
                         else
                         {
-                            cookieValue = tempCookie.Substring(Equallength + 1, tempCookie.Length - Equallength - 1).Trim();
+                            cookieValue = tempCookie.Substring(equalLength + 1, tempCookie.Length - equalLength - 1).Trim();
                         }
                     }
                     else
@@ -61,7 +75,7 @@ namespace SS.Toolkit.Http
                         cookieKey = tempCookie.Trim();
                         cookieValue = string.Empty;
                     }
-                    acc.Add(new AsyncCookie() { Name = cookieKey, Value = cookieValue });
+                    acc.Add(new Cookie() { Name = cookieKey, Value = cookieValue });
                 }
             }
             return acc;
@@ -85,21 +99,65 @@ namespace SS.Toolkit.Http
             }
             foreach (Cookie cookie in listCookies)
             {
-                acc.Add(new AsyncCookie() { Name = cookie.Name, Value = cookie.Value, Domain = cookie.Domain, Path = cookie.Path });
+                acc.Add(new Cookie() { Name = cookie.Name, Value = cookie.Value, Domain = cookie.Domain, Path = cookie.Path });
             }
             return acc;
         }
 
-        public void Add(AsyncCookie cookie)
+
+        public void Add(string cookieStr)
         {
-            try
+            Cookie cookie = new Cookie();
+            var keys = cookieStr.Split(';');
+            foreach (var item in keys)
             {
-                this._CookieList.Add(cookie);
+                if (item.IndexOf('=') != -1)
+                {
+                    var k = item.Split('=')[0];
+                    var v = item.Split('=')[1];
+                    if (string.Equals(k, "path", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cookie.Path = v;
+                    }
+                    else if (string.Equals(k, "domain", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cookie.Domain = v;
+                    }
+                    else if (string.Equals(k, "version", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (int.TryParse(v, out int version))
+                        {
+                            cookie.Version = version;
+                        }
+                    }
+                    else if (string.Equals(k, "comment", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cookie.Comment = v;
+                    }
+                    else
+                    {
+                        cookie.Name = k;
+                        cookie.Value = v;
+                    }
+                }
+                else
+                {
+                    if (string.Equals(item, "secure ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cookie.Secure = true;
+                    }
+                    else if (string.Equals(item, "httponly ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cookie.HttpOnly = true;
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            this.Add(cookie);
+        }
+
+        public void Add(Cookie cookie)
+        {
+            this._CookieList.Add(cookie);
         }
 
         public CookieContainer ToCookieContainer(Uri uri)

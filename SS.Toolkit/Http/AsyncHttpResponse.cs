@@ -54,10 +54,9 @@ namespace SS.Toolkit.Http
                         {
                             Cookies = new AsyncCookieContainer();
                         }
-                        foreach (var item in kv.Value)
+                        foreach (var cookieStr in kv.Value)
                         {
-                            AsyncCookie cookie = new AsyncCookie(item);
-                            Cookies.Add(cookie);
+                            Cookies.Add(cookieStr);
                         }
                     }
                     Headers[kv.Key] = string.Join(";", kv.Value);
@@ -98,17 +97,19 @@ namespace SS.Toolkit.Http
         public byte[] GetBytes()
         {
             if (Data == null)
+            {
                 return null;
-            else
-                return Data;
+            }
+            return Data;
         }
 
         public string GetString()
         {
             if (Data == null)
+            {
                 return null;
-            else
-                return Encoding.GetString(Data);
+            }
+            return Encoding.GetString(Data);
         }
 
         public void Dispose()
