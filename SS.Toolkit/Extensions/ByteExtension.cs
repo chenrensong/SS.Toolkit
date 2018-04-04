@@ -15,7 +15,6 @@ namespace SS.Toolkit.Extensions
             return copy;
         }
 
-
         public static int ToBit(this bool value)
         {
             return value ? 1 : 0;
@@ -29,7 +28,6 @@ namespace SS.Toolkit.Extensions
             stream.Seek(0, SeekOrigin.Begin);
             return bytes;
         }
-
 
         public static byte[] CopyReverse(this byte[] src)
         {

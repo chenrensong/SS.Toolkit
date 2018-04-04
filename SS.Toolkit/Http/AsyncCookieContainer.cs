@@ -107,52 +107,61 @@ namespace SS.Toolkit.Http
 
         public void Add(string cookieStr)
         {
-            Cookie cookie = new Cookie();
-            var keys = cookieStr.Split(';');
-            foreach (var item in keys)
+            try
             {
-                if (item.IndexOf('=') != -1)
+                Cookie cookie = new Cookie();
+                var keys = cookieStr.Split(';');
+                foreach (var item in keys)
                 {
-                    var k = item.Split('=')[0];
-                    var v = item.Split('=')[1];
-                    if (string.Equals(k, "path", StringComparison.OrdinalIgnoreCase))
+                    var str = item.Trim();
+                    if (str.IndexOf('=') != -1)
                     {
-                        cookie.Path = v;
-                    }
-                    else if (string.Equals(k, "domain", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cookie.Domain = v;
-                    }
-                    else if (string.Equals(k, "version", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (int.TryParse(v, out int version))
+                        var k = str.Split('=')[0].Trim();
+                        var v = str.Split('=')[1].Trim();
+                        if (string.Equals(k, "path", StringComparison.OrdinalIgnoreCase))
                         {
-                            cookie.Version = version;
+                            cookie.Path = v;
                         }
-                    }
-                    else if (string.Equals(k, "comment", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cookie.Comment = v;
+                        else if (string.Equals(k, "domain", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cookie.Domain = v;
+                        }
+                        else if (string.Equals(k, "version", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (int.TryParse(v, out int version))
+                            {
+                                cookie.Version = version;
+                            }
+                        }
+                        else if (string.Equals(k, "comment", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cookie.Comment = v;
+                        }
+                        else
+                        {
+                            cookie.Name = k;
+                            cookie.Value = v;
+                        }
                     }
                     else
                     {
-                        cookie.Name = k;
-                        cookie.Value = v;
+                        if (string.Equals(str, "secure", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cookie.Secure = true;
+                        }
+                        else if (string.Equals(str, "httponly", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cookie.HttpOnly = true;
+                        }
                     }
                 }
-                else
-                {
-                    if (string.Equals(item, "secure ", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cookie.Secure = true;
-                    }
-                    else if (string.Equals(item, "httponly ", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cookie.HttpOnly = true;
-                    }
-                }
+                this.Add(cookie);
             }
-            this.Add(cookie);
+            catch (Exception ex)
+            {
+                // to do 
+                Console.WriteLine(ex);
+            }
         }
 
         public void Add(Cookie cookie)

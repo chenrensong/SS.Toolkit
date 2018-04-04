@@ -6,7 +6,6 @@ namespace SS.Toolkit.Drawing
 {
     public class Extremum
     {
-
         public static List<int> GetMinExtrem(int[] data)
         {
             int min = data[0];
@@ -45,12 +44,10 @@ namespace SS.Toolkit.Drawing
                     lastEqIndex = i;
                 }
             }
-
             foreach (var integer in list)
             {
                 System.Console.WriteLine(integer + " ");
             }
-
             return list;
         }
     }

@@ -5,8 +5,8 @@ namespace SS.Toolkit.Http
 {
     internal class CookieContainerBuilder
     {
-        AsyncCookieContainer _asyncCookieContainer;
-        CookieContainer _cookieContainer;
+        private AsyncCookieContainer _asyncCookieContainer;
+        private CookieContainer _cookieContainer;
 
         private CookieContainerBuilder(AsyncCookieContainer asyncCookieContainer)
         {

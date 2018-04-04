@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SS.Toolkit.Generic
 {
@@ -21,10 +20,21 @@ namespace SS.Toolkit.Generic
         public bool TryGetValue(TKey key, out TValue value)
         {
             lock (_Padlock)
+            {
                 return _Dictionary.TryGetValue(key, out value);
+            }
         }
 
-        public int Count { get { lock (_Padlock) return _Dictionary.Count; } }
+        public int Count
+        {
+            get
+            {
+                lock (_Padlock)
+                {
+                    return _Dictionary.Count;
+                }
+            }
+        }
 
         public TValue this[TKey key]
         {

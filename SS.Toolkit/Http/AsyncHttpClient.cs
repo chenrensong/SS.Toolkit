@@ -254,7 +254,6 @@ namespace SS.Toolkit.Http
         }
 
 
-
         private HttpClient DoBuildHttpClient()
         {
             var clientHandler = new HttpClientHandler();
@@ -265,13 +264,11 @@ namespace SS.Toolkit.Http
                 _cookieContainer = _cookieContainerBuilder.Builder(_uri);
                 _cookieContainerBuilder = null;//使用一次就不用了
             }
-
             if (_cookieContainer == null)
             {
                 _cookieContainer = new CookieContainer();
             }
             clientHandler.CookieContainer = _cookieContainer;
-
             if (_automaticDecompression.HasValue)
             {
                 clientHandler.AutomaticDecompression = _automaticDecompression.Value;
@@ -298,7 +295,6 @@ namespace SS.Toolkit.Http
             }
             return client;
         }
-
 
         public void Dispose()
         {
