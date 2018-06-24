@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace SS.Toolkit.Http
 {
@@ -14,6 +15,7 @@ namespace SS.Toolkit.Http
         private Uri _uri;
         private Dictionary<string, string> _headers;
         private string _encoding;
+        private string _contentType;
 
         private CookieContainer _cookieContainer;
         private CookieContainerBuilder _cookieContainerBuilder;
@@ -118,7 +120,6 @@ namespace SS.Toolkit.Http
             return this;
         }
 
-
         public AsyncHttpClient Cookies(string cookies)
         {
             if (cookies != null)
@@ -161,17 +162,10 @@ namespace SS.Toolkit.Http
             return this;
         }
 
-        public string ContentType()
-        {
-            return _headers["Content-Type"];
-        }
 
         public AsyncHttpClient ContentType(string contentType)
         {
-            if (contentType != null)
-            {
-                Header("Content-Type", contentType);
-            }
+            _contentType = contentType;
             return this;
         }
 
@@ -277,6 +271,7 @@ namespace SS.Toolkit.Http
             {
                 clientHandler.AllowAutoRedirect = _allowAutoRedirect.Value;
             }
+      
             var client = new HttpClient(clientHandler);
             if (_timeout.HasValue)
             {
@@ -285,6 +280,10 @@ namespace SS.Toolkit.Http
             if (_expectContinue.HasValue)
             {
                 client.DefaultRequestHeaders.ExpectContinue = _expectContinue.Value;
+            }
+            if (!string.IsNullOrEmpty(_contentType))
+            {
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_contentType));
             }
             if (_headers != null)
             {

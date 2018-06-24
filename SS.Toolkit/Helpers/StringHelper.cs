@@ -26,6 +26,17 @@ namespace SS.Toolkit.Helpers
             return msg.ToString();
         }
 
+        public static string GetRandomStr(int len)
+        {
+            Random rd = new Random(Guid.NewGuid().GetHashCode());
+            StringBuilder s = new StringBuilder();
+            for (int i = 0; i < len; i++)
+            {
+                s.Append(rd.Next(1, 10).ToString());
+            }
+            return s.ToString();
+        }
+
         public static string ToUnderlineStyle(string name)
         {
             if (string.IsNullOrEmpty(name))

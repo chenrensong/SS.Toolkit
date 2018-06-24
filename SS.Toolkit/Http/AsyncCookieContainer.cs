@@ -110,6 +110,7 @@ namespace SS.Toolkit.Http
             try
             {
                 Cookie cookie = new Cookie();
+                bool isSetValue = false;
                 var keys = cookieStr.Split(';');
                 foreach (var item in keys)
                 {
@@ -137,8 +138,18 @@ namespace SS.Toolkit.Http
                         {
                             cookie.Comment = v;
                         }
+                        else if (string.Equals(k, "Max-Age", StringComparison.OrdinalIgnoreCase))
+                        {
+                            //暂时不处理
+                            //Max-Age=604800
+                        }
                         else
                         {
+                            if (isSetValue)
+                            {
+                                continue;
+                            }
+                            isSetValue = true;
                             cookie.Name = k;
                             cookie.Value = v;
                         }

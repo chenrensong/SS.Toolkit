@@ -51,6 +51,11 @@ namespace SS.Toolkit.IO
             return new ByteBuffer(bytes);
         }
 
+        public static void Reverse(Array array)
+        {
+            Array.Reverse(array);
+        }
+
         /**
          * 根据length长度，确定大于此leng的最近的2次方数，如length=7，则返回值为8
          */
@@ -66,14 +71,28 @@ namespace SS.Toolkit.IO
             return b;
         }
 
-        /**
-         * 翻转字节数组，如果本地字节序列为低字节序列，则进行翻转以转换为高字节序列
-         */
-        private byte[] flip(byte[] bytes)
+
+        /// <summary>
+        ///  翻转字节数组，如果本地字节序列为低字节序列，则进行翻转以转换为高字节序列（大小端）
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="isLittleEndian"></param>
+        /// <returns></returns>
+        private byte[] flip(byte[] bytes, bool isLittleEndian = false)
         {
             if (BitConverter.IsLittleEndian)
             {
-                Array.Reverse(bytes);
+                if (!isLittleEndian)//系统为小端，这时候需要的是大端则转换
+                {
+                    Array.Reverse(bytes);
+                }
+            }
+            else
+            {
+                if (isLittleEndian)//系统为大端，这时候需要的是小端则转换
+                {
+                    Array.Reverse(bytes);
+                }
             }
             return bytes;
         }
@@ -139,33 +158,38 @@ namespace SS.Toolkit.IO
         /**
          * 将一个ByteBuffer的有效字节区写入此缓存区中
          */
-        public void Write(ByteBuffer buffer)
+        public void Write(ByteBuffer buffer, bool isLittleEndian = false)
         {
-            if (buffer == null) return;
-            if (buffer.ReadableBytes() <= 0) return;
-            WriteBytes(buffer.ToArray());
+            if (buffer == null) { return; }
+            if (buffer.ReadableBytes() <= 0) { return; }
+            var bytes = buffer.ToArray();
+            if (isLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+            WriteBytes(bytes);
         }
 
         /**
          * 写入一个int16数据
          */
-        public void WriteShort(short value)
+        public void WriteShort(short value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个uint16数据
          */
-        public void WriteUshort(ushort value)
+        public void WriteUshort(ushort value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个int32数据
          */
-        public void WriteInt(int value)
+        public void WriteInt(int value, bool isLittleEndian = false)
         {
             //byte[] array = new byte[4];
             //for (int i = 3; i >= 0; i--)
@@ -175,39 +199,39 @@ namespace SS.Toolkit.IO
             //}
             //Array.Reverse(array);
             //Write(array);
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个uint32数据
          */
-        public void WriteUint(uint value)
+        public void WriteUint(uint value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个int64数据
          */
-        public void WriteLong(long value)
+        public void WriteLong(long value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个uint64数据
          */
-        public void WriteUlong(ulong value)
+        public void WriteUlong(ulong value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
          * 写入一个float数据
          */
-        public void WriteFloat(float value)
+        public void WriteFloat(float value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
@@ -228,9 +252,9 @@ namespace SS.Toolkit.IO
         /**
          * 写入一个double类型数据
          */
-        public void WriteDouble(double value)
+        public void WriteDouble(double value, bool isLittleEndian = false)
         {
-            WriteBytes(flip(BitConverter.GetBytes(value)));
+            WriteBytes(flip(BitConverter.GetBytes(value), isLittleEndian));
         }
 
         /**
@@ -246,14 +270,15 @@ namespace SS.Toolkit.IO
         /**
          * 从读取索引位置开始读取len长度的字节数组
          */
-        private byte[] Read(int len)
+        private byte[] Read(int len, bool isLittleEndian = false)
         {
             byte[] bytes = new byte[len];
             Array.Copy(buf, readIndex, bytes, 0, len);
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
+            //if (BitConverter.IsLittleEndian)
+            //{
+            //    Array.Reverse(bytes);
+            //}
+            bytes = flip(bytes, isLittleEndian);
             readIndex += len;
             return bytes;
         }
@@ -261,70 +286,92 @@ namespace SS.Toolkit.IO
         /**
          * 读取一个uint16数据
          */
-        public ushort ReadUshort()
+        public ushort ReadUshort(bool isLittleEndian = false)
         {
-            return BitConverter.ToUInt16(Read(2), 0);
+            return BitConverter.ToUInt16(Read(2, isLittleEndian), 0);
         }
 
         /**
          * 读取一个int16数据
          */
-        public short ReadShort()
+        public short ReadShort(bool isLittleEndian = false)
         {
-            return BitConverter.ToInt16(Read(2), 0);
+            return BitConverter.ToInt16(Read(2, isLittleEndian), 0);
         }
 
         /**
          * 读取一个uint32数据
          */
-        public uint ReadUint()
+        public uint ReadUint(bool isLittleEndian = false)
         {
-            return BitConverter.ToUInt32(Read(4), 0);
+            return BitConverter.ToUInt32(Read(4, isLittleEndian), 0);
         }
 
         /**
          * 读取一个int32数据
          */
-        public int ReadInt()
+        public int ReadInt(bool isLittleEndian = false)
         {
-            return BitConverter.ToInt32(Read(4), 0);
+            return BitConverter.ToInt32(Read(4, isLittleEndian), 0);
         }
 
         /**
          * 读取一个uint64数据
          */
-        public ulong ReadUlong()
+        public ulong ReadUlong(bool isLittleEndian = false)
         {
-            return BitConverter.ToUInt64(Read(8), 0);
+            return BitConverter.ToUInt64(Read(8, isLittleEndian), 0);
         }
 
         /**
          * 读取一个long数据
          */
-        public long ReadLong()
+        public long ReadLong(bool isLittleEndian = false)
         {
-            return BitConverter.ToInt64(Read(8), 0);
+            return BitConverter.ToInt64(Read(8, isLittleEndian), 0);
         }
 
         /**
          * 读取一个float数据
          */
-        public float ReadFloat()
+        public float ReadFloat(bool isLittleEndian = false)
         {
-            return BitConverter.ToSingle(Read(4), 0);
+            return BitConverter.ToSingle(Read(4, isLittleEndian), 0);
         }
 
         /**
          * 读取一个double数据
          */
-        public double ReadDouble()
+        public double ReadDouble(bool isLittleEndian = false)
         {
-            return BitConverter.ToDouble(Read(8), 0);
+            return BitConverter.ToDouble(Read(8, isLittleEndian), 0);
+        }
+
+        /// <summary>
+        /// 读出来都默认当成是高端的
+        /// </summary>
+        /// <param name="len"></param>
+        /// <returns></returns>
+        public byte[] ReadBytes(int len, bool isLittleEndian = false)
+        {
+            var bytes = Read(len, isLittleEndian);
+            return bytes;
+        }
+
+        /// <summary>
+        /// 读取剩下所有的字节
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ReadToEnd( bool isLittleEndian = false)
+        {
+            var len = this.capacity - this.readIndex;
+            var bytes = Read(len, isLittleEndian);
+            return bytes;
         }
 
         /**
          * 从读取索引位置开始读取len长度的字节到disbytes目标字节数组中
-         * @params disstart 目标字节数组的写入索引
+         * @params disstart 目标字节数组的写入索引 （性能不高）
          */
         public void ReadBytes(byte[] disbytes, int disstart, int len)
         {
@@ -334,6 +381,7 @@ namespace SS.Toolkit.IO
                 disbytes[i] = this.ReadByte();
             }
         }
+
 
         /**
          * 清除已读字节并重建缓存区
@@ -437,5 +485,8 @@ namespace SS.Toolkit.IO
         {
             return this.capacity;
         }
+
+
+
     }
 }
