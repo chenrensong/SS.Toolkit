@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DrawingCore;
-using System.Text;
+using System.Drawing;
 
 namespace SS.Toolkit.Drawing.Effect
 {
@@ -15,7 +14,6 @@ namespace SS.Toolkit.Drawing.Effect
         private int minD = 12;//最小字符宽度
         private int maxD = 26;
         private int meanD = 17;//平均字符宽度
-
         private int b = 1;//大水滴的宽度 2*B+1,取0或者1效果最好
 
         private Bitmap sourceImage;

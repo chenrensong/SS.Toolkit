@@ -4,24 +4,24 @@ namespace SS.Toolkit.Generic
 {
     public sealed class SafeDictionary<TKey, TValue>
     {
-        private readonly object _Padlock = new object();
-        private readonly Dictionary<TKey, TValue> _Dictionary;
+        private readonly object _lock = new object();
+        private readonly Dictionary<TKey, TValue> _dictionary;
 
         public SafeDictionary(int capacity)
         {
-            _Dictionary = new Dictionary<TKey, TValue>(capacity);
+            _dictionary = new Dictionary<TKey, TValue>(capacity);
         }
 
         public SafeDictionary()
         {
-            _Dictionary = new Dictionary<TKey, TValue>();
+            _dictionary = new Dictionary<TKey, TValue>();
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            lock (_Padlock)
+            lock (_lock)
             {
-                return _Dictionary.TryGetValue(key, out value);
+                return _dictionary.TryGetValue(key, out value);
             }
         }
 
@@ -29,9 +29,9 @@ namespace SS.Toolkit.Generic
         {
             get
             {
-                lock (_Padlock)
+                lock (_lock)
                 {
-                    return _Dictionary.Count;
+                    return _dictionary.Count;
                 }
             }
         }
@@ -40,27 +40,27 @@ namespace SS.Toolkit.Generic
         {
             get
             {
-                lock (_Padlock)
+                lock (_lock)
                 {
-                    return _Dictionary[key];
+                    return _dictionary[key];
                 }
             }
             set
             {
-                lock (_Padlock)
+                lock (_lock)
                 {
-                    _Dictionary[key] = value;
+                    _dictionary[key] = value;
                 }
             }
         }
 
         public void Add(TKey key, TValue value)
         {
-            lock (_Padlock)
+            lock (_lock)
             {
-                if (_Dictionary.ContainsKey(key) == false)
+                if (_dictionary.ContainsKey(key) == false)
                 {
-                    _Dictionary.Add(key, value);
+                    _dictionary.Add(key, value);
                 }
             }
         }

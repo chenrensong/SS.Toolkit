@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DrawingCore;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace SS.Toolkit.Drawing
 {

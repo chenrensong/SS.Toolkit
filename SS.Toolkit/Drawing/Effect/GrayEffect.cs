@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.DrawingCore;
-using System.DrawingCore.Imaging;
-using System.Text;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace SS.Toolkit.Drawing.Effect
 {
@@ -37,7 +35,7 @@ namespace SS.Toolkit.Drawing.Effect
             }
             int height = bitmap.Height;
             int width = bitmap.Width;
-            BitmapData bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+            var bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
             unsafe
             {
                 byte* ptr = (byte*)bdata.Scan0.ToPointer();

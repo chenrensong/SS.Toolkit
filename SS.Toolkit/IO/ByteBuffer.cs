@@ -5,25 +5,25 @@ namespace SS.Toolkit.IO
     public class ByteBuffer
     {
         //字节缓存区
-        private byte[] buf;
+        private byte[] _buf;
         //读取索引
-        private int readIndex = 0;
+        private int _readIndex = 0;
         //写入索引
-        private int writeIndex = 0;
+        private int _writeIndex = 0;
         //读取索引标记
-        private int markReadIndex = 0;
+        private int _markReadIndex = 0;
         //写入索引标记
-        private int markWirteIndex = 0;
+        private int _markWirteIndex = 0;
         //缓存区字节数组的长度
-        private int capacity;
+        private int _capacity;
 
         /**
          * 构造方法
          */
         private ByteBuffer(int capacity)
         {
-            buf = new byte[capacity];
-            this.capacity = capacity;
+            _buf = new byte[capacity];
+            this._capacity = capacity;
         }
 
         /**
@@ -31,8 +31,8 @@ namespace SS.Toolkit.IO
          */
         private ByteBuffer(byte[] bytes)
         {
-            buf = bytes;
-            this.capacity = bytes.Length;
+            _buf = bytes;
+            this._capacity = bytes.Length;
         }
 
         /**
@@ -112,9 +112,10 @@ namespace SS.Toolkit.IO
                     size = FixLength(futureLen) * 2;
                 }
                 byte[] newbuf = new byte[size];
-                Array.Copy(buf, 0, newbuf, 0, currLen);
-                buf = newbuf;
-                capacity = newbuf.Length;
+
+                Array.Copy(_buf, 0, newbuf, 0, currLen);
+                _buf = newbuf;
+                _capacity = newbuf.Length;
             }
             return futureLen;
         }
@@ -128,14 +129,14 @@ namespace SS.Toolkit.IO
             {
                 int offset = length - startIndex;
                 if (offset <= 0) return;
-                int total = offset + writeIndex;
-                int len = buf.Length;
+                int total = offset + _writeIndex;
+                int len = _buf.Length;
                 FixSizeAndReset(len, total);
-                for (int i = writeIndex, j = startIndex; i < total; i++, j++)
+                for (int i = _writeIndex, j = startIndex; i < total; i++, j++)
                 {
-                    buf[i] = bytes[j];
+                    _buf[i] = bytes[j];
                 }
-                writeIndex = total;
+                _writeIndex = total;
             }
         }
 
@@ -241,11 +242,11 @@ namespace SS.Toolkit.IO
         {
             lock (this)
             {
-                int afterLen = writeIndex + 1;
-                int len = buf.Length;
+                int afterLen = _writeIndex + 1;
+                int len = _buf.Length;
                 FixSizeAndReset(len, afterLen);
-                buf[writeIndex] = value;
-                writeIndex = afterLen;
+                _buf[_writeIndex] = value;
+                _writeIndex = afterLen;
             }
         }
 
@@ -262,8 +263,8 @@ namespace SS.Toolkit.IO
          */
         public byte ReadByte()
         {
-            byte b = buf[readIndex];
-            readIndex++;
+            byte b = _buf[_readIndex];
+            _readIndex++;
             return b;
         }
 
@@ -273,13 +274,13 @@ namespace SS.Toolkit.IO
         private byte[] Read(int len, bool isLittleEndian = false)
         {
             byte[] bytes = new byte[len];
-            Array.Copy(buf, readIndex, bytes, 0, len);
+            Array.Copy(_buf, _readIndex, bytes, 0, len);
             //if (BitConverter.IsLittleEndian)
             //{
             //    Array.Reverse(bytes);
             //}
             bytes = flip(bytes, isLittleEndian);
-            readIndex += len;
+            _readIndex += len;
             return bytes;
         }
 
@@ -362,9 +363,9 @@ namespace SS.Toolkit.IO
         /// 读取剩下所有的字节
         /// </summary>
         /// <returns></returns>
-        public byte[] ReadToEnd( bool isLittleEndian = false)
+        public byte[] ReadToEnd(bool isLittleEndian = false)
         {
-            var len = this.capacity - this.readIndex;
+            var len = this._capacity - this._readIndex;
             var bytes = Read(len, isLittleEndian);
             return bytes;
         }
@@ -388,23 +389,26 @@ namespace SS.Toolkit.IO
          */
         public void DiscardReadBytes()
         {
-            if (readIndex <= 0) return;
-            int len = buf.Length - readIndex;
+            if (_readIndex <= 0)
+            {
+                return;
+            }
+            int len = _buf.Length - _readIndex;
             byte[] newbuf = new byte[len];
-            Array.Copy(buf, readIndex, newbuf, 0, len);
-            buf = newbuf;
-            writeIndex -= readIndex;
-            markReadIndex -= readIndex;
-            if (markReadIndex < 0)
+            Array.Copy(_buf, _readIndex, newbuf, 0, len);
+            _buf = newbuf;
+            _writeIndex -= _readIndex;
+            _markReadIndex -= _readIndex;
+            if (_markReadIndex < 0)
             {
-                markReadIndex = readIndex;
+                _markReadIndex = _readIndex;
             }
-            markWirteIndex -= readIndex;
-            if (markWirteIndex < 0 || markWirteIndex < readIndex || markWirteIndex < markReadIndex)
+            _markWirteIndex -= _readIndex;
+            if (_markWirteIndex < 0 || _markWirteIndex < _readIndex || _markWirteIndex < _markReadIndex)
             {
-                markWirteIndex = writeIndex;
+                _markWirteIndex = _writeIndex;
             }
-            readIndex = 0;
+            _readIndex = 0;
         }
 
         /**
@@ -412,11 +416,11 @@ namespace SS.Toolkit.IO
          */
         public void Clear()
         {
-            buf = new byte[buf.Length];
-            readIndex = 0;
-            writeIndex = 0;
-            markReadIndex = 0;
-            markWirteIndex = 0;
+            _buf = new byte[_buf.Length];
+            _readIndex = 0;
+            _writeIndex = 0;
+            _markReadIndex = 0;
+            _markWirteIndex = 0;
         }
 
         /**
@@ -425,7 +429,7 @@ namespace SS.Toolkit.IO
         public void SetReaderIndex(int index)
         {
             if (index < 0) return;
-            readIndex = index;
+            _readIndex = index;
         }
 
         /**
@@ -433,7 +437,7 @@ namespace SS.Toolkit.IO
          */
         public void MarkReaderIndex()
         {
-            markReadIndex = readIndex;
+            _markReadIndex = _readIndex;
         }
 
         /**
@@ -441,7 +445,7 @@ namespace SS.Toolkit.IO
          */
         public void MarkWriterIndex()
         {
-            markWirteIndex = writeIndex;
+            _markWirteIndex = _writeIndex;
         }
 
         /**
@@ -449,7 +453,7 @@ namespace SS.Toolkit.IO
          */
         public void ResetReaderIndex()
         {
-            readIndex = markReadIndex;
+            _readIndex = _markReadIndex;
         }
 
         /**
@@ -457,7 +461,7 @@ namespace SS.Toolkit.IO
          */
         public void ResetWriterIndex()
         {
-            writeIndex = markWirteIndex;
+            _writeIndex = _markWirteIndex;
         }
 
         /**
@@ -465,7 +469,7 @@ namespace SS.Toolkit.IO
          */
         public int ReadableBytes()
         {
-            return writeIndex - readIndex;
+            return _writeIndex - _readIndex;
         }
 
         /**
@@ -473,8 +477,8 @@ namespace SS.Toolkit.IO
          */
         public byte[] ToArray()
         {
-            byte[] bytes = new byte[writeIndex];
-            Array.Copy(buf, 0, bytes, 0, bytes.Length);
+            byte[] bytes = new byte[_buf.Length - _readIndex];
+            Array.Copy(_buf, _readIndex, bytes, 0, bytes.Length);
             return bytes;
         }
 
@@ -483,7 +487,7 @@ namespace SS.Toolkit.IO
          */
         public int GetCapacity()
         {
-            return this.capacity;
+            return this._capacity;
         }
 
 

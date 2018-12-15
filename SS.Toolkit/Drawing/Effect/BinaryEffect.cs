@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DrawingCore;
-using System.DrawingCore.Imaging;
-using System.Text;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace SS.Toolkit.Drawing.Effect
 {

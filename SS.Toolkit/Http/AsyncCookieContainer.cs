@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Collections;
+using System.Diagnostics;
 
 namespace SS.Toolkit.Http
 {
@@ -171,7 +172,7 @@ namespace SS.Toolkit.Http
             catch (Exception ex)
             {
                 // to do 
-                Console.WriteLine(ex);
+                Debug.WriteLine(ex);
             }
         }
 
