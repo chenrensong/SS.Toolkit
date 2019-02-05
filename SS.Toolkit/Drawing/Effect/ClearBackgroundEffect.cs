@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace SS.Toolkit.Drawing.Effect
 {
@@ -16,7 +13,7 @@ namespace SS.Toolkit.Drawing.Effect
             int width = bitmap.Width;
             int height = bitmap.Height;
             var dgGrayValue = ComputeThresholdValue(bitmap);
-            BitmapData bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb); //红绿蓝个八位，其余8位没使用
+            var bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb); //红绿蓝个八位，其余8位没使用
             unsafe
             {
                 byte* ptr = (byte*)bdata.Scan0.ToPointer();

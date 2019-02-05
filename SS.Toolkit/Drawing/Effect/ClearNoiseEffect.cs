@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace SS.Toolkit.Drawing.Effect
 {
@@ -23,7 +20,7 @@ namespace SS.Toolkit.Drawing.Effect
         {
             int width = bitmap.Width;
             int height = bitmap.Height;
-            BitmapData bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+            var bdata = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
 
             #region 指针法
 

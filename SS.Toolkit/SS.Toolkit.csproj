@@ -1,8 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+<<<<<<< .mine
     <VersionPrefix>2.1.0</VersionPrefix>
     <Version>2.1.0</Version>
+=======
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <Version>1.9.0</Version>
+>>>>>>> .theirs
     <Authors>chenrensong</Authors>
     <PackageProjectUrl>https://github.com/chenrensong/SS.Toolkit</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
@@ -20,6 +25,7 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -31,10 +37,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< .mine
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+
+
+=======
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Buffers" Version="4.5.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.Memory" Version="4.5.1" />
+>>>>>>> .theirs
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+<<<<<<< .mine
+
+
+=======
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.1" />
+>>>>>>> .theirs
   </ItemGroup>
 
   

@@ -70,14 +70,13 @@ namespace SS.Toolkit.Extensions
 
         public static DateTime ToDateTime(this long t)
         {
-            DateTime time = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             if (t.ToString().Length == 10) // 秒
             {
-                return time.AddSeconds(t).ToLocalTime();
+                return Jan1st1970.AddSeconds(t).ToLocalTime();
             }
             else //毫秒
             {
-                return time.AddMilliseconds(t).ToLocalTime();
+                return Jan1st1970.AddMilliseconds(t).ToLocalTime();
             }
         }
     }
