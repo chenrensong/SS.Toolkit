@@ -5,9 +5,9 @@
  * refer: https://softwarebydefault.com/2013/05/19/image-erosion-dilation/
 */
 
-using System.DrawingCore;
-using System.DrawingCore.Drawing2D;
-using System.DrawingCore.Imaging;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 

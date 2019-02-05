@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.DrawingCore;
-using System.DrawingCore.Drawing2D;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Text;
 
 namespace SS.Toolkit.Drawing.Effect
