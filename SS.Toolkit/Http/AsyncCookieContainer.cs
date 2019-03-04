@@ -181,12 +181,22 @@ namespace SS.Toolkit.Http
             this._CookieList.Add(cookie);
         }
 
+        public int MaxCookieSize { get; set; } = 4096;// CookieContainer.DefaultCookieLengthLimit;
+
+        public int PerDomainCapacity { get; set; } = 30;// CookieContainer.DefaultPerDomainCookieLimit;
+
+        public int Capacity { get; set; } = 300;// CookieContainer.DefaultCookieLimit;
+
+
         public CookieContainer ToCookieContainer(Uri uri)
         {
-            CookieContainer cc = new CookieContainer();
+            CookieContainer cc = new CookieContainer(Capacity, PerDomainCapacity, MaxCookieSize);
+            var index = 0;
             foreach (var item in _CookieList)
             {
+                index++;
                 cc.Add(new Cookie(item.Name, item.Value, "/", uri.Host));
+                Debug.WriteLine("index:" + index + " count:" + cc.Count);
             }
             return cc;
         }

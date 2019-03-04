@@ -18,6 +18,11 @@ namespace SS.Toolkit.Http
             _cookieContainer = cookieContainer;
         }
 
+        //public string GetCookies()
+        //{
+        //    return _asyncCookieContainer.
+        //}
+
         public CookieContainer Builder(Uri uri)
         {
             if (_asyncCookieContainer != null)

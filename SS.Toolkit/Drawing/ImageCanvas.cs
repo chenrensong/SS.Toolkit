@@ -1,11 +1,6 @@
 ﻿using System.Collections.Generic;
-<<<<<<< .mine
-using System.Drawing;
-using System.Text;
-=======
 using System.Drawing;
 
->>>>>>> .theirs
 
 namespace SS.Toolkit.Drawing
 {
